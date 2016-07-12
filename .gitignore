@@ -102,4 +102,4 @@ ENV/
 # Sample image
 sample-out.png
 .idea
-.user.txt
+user.txt
