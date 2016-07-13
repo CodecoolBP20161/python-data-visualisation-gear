@@ -18,10 +18,11 @@ class Text():
         self.color = color
         self.font = ImageFont.truetype(font, self.font_size)
         self.text_size = []
+        self.img2 = 0
 
         self.text_size = self.draw.textsize(self.name, font=self.font)
-        img2 = Image.new("RGB", (self.text_size[0], 11*self.weight), self.color)
-        draw2 = ImageDraw.Draw(img2)
+        self.img2 = Image.new("RGB", (self.text_size[0], 11*self.weight), self.color)
+        draw2 = ImageDraw.Draw(self.img2)
         draw2.text((0, 0), self.name, fill=(255, 255, 255), font=self.font)
         # img2.save(self.name)
         # img2.show()
@@ -32,6 +33,9 @@ class Text():
             return self.text_size[0], 11*self.weight
         else:
             raise Exception('No text_size parameters')
+
+    def get_text(self):
+        return self.img2
 
 
 class Cloud():
@@ -64,6 +68,7 @@ class Cloud():
 
     def create_cloud(self):
         img = Image.new("RGB", (self.max_width, self.max_height), "blue")
+        return img
 
 
 
@@ -75,16 +80,25 @@ text_list = []
 weight = 0
 for world in world_tuple:
     worlds = Text(world[0], world[1], (120, 120, 120))
-    text_list.append((worlds.get_text_size(), worlds.name))  # worlds,
-    weight += worlds.weight
+    text_list.append(worlds)  # worlds,
+    weight += worlds.weight**2
 print(text_list)
-print(min([i[0][0] for i in text_list]))
-print(min([i[0][1] for i in text_list]))
+min_x = min([i.get_text_size()[0] for i in text_list])
+min_y = min([i.get_text_size()[1] for i in text_list])
 print(weight)
 print(len(text_list))
-first = Cloud(min([i[0][0] for i in text_list]), min([i[0][1] for i in text_list]), weight, len(text_list))
+first = Cloud(min_x, min_y, weight, len(text_list))
 free_places = first.grid()
 print(*free_places)
+img = first.create_cloud()
+# img.show()
+pic = text_list[0].get_text()
+pic.show()
+img.paste(pic, tuple(free_places[0]))
+for i in range(text_list[0].weight):
+    free_places.pop(0)
+img.show()
+
 
 
 
