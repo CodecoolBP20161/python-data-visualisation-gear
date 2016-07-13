@@ -62,5 +62,28 @@ class Database():
         return client_colors
 
 
+def get_average_color_codes_by_companies(nested_list):
+    list_of_companies = []
+    to_return = []
+    for i in nested_list:
+        if i[0] not in list_of_companies:
+            list_of_companies.append(i[0])
+            to_return.append([i[0], i[1]])
+        else:
+            current_company_index = list_of_companies.index(i[0])
+            to_pass = avg(to_return[current_company_index][1], i[1])
+            to_return[current_company_index][1] = to_pass
+    return to_return
 
-print(Database.get_client_colors())
+
+def avg(values1, values2):
+    to_return = []
+    for i in range(len(values1)):
+        to_calculate = values1[i] + values2[i]
+        to_return.append(int(to_calculate / 2))
+    return to_return
+
+
+# print(get_average_color_codes_by_companies(Database.get_client_colors()))
+# print("--------------------------------------------------------------------------")
+# print(Database.get_client_colors())
