@@ -7,6 +7,7 @@ import math
 
 class Text():
 
+
     MIN_FONTSIZE = 10
     img = Image.new("RGB", (5, 5), "red")
     draw = ImageDraw.Draw(img)
@@ -35,6 +36,7 @@ class Text():
             raise Exception('No text_size parameters')
 
     def get_text(self):
+        # self.img2 = self.img2.rotate(90, resample=Image.BICUBIC, expand=True)
         return self.img2
 
 
@@ -47,17 +49,21 @@ class Cloud():
         self.text_number = text_number
         self.max_width = 0
         self.max_height = 0
+        self.multi = 0
+        self.list_x = 0
+        self.list_y = 0
+
 
 
     def grid(self):
         grid_cross = []
-        multi = math.ceil(math.sqrt(self.max_weight + self.text_number))
-        self.max_width = self.grid_x * (multi+1)
-        self.max_height = self.grid_y * (multi+1)
-        list_x = [*range(0, self.max_width, self.grid_x)]
-        list_y = [*range(0, self.max_height, self.grid_y)]
-        for x in list_x:
-            for y in list_y:
+        self.multi = math.ceil(math.sqrt(self.max_weight + self.text_number))
+        self.max_width = self.grid_x * (self.multi+1)
+        self.max_height = self.grid_y * (self.multi+1)
+        self.list_x = [*range(0, self.max_width, self.grid_x)]
+        self.list_y = [*range(0, self.max_height, self.grid_y)]
+        for x in self.list_x:
+            for y in self.list_y:
                 grid_cross.append([x, y])
         return grid_cross
 
@@ -70,6 +76,16 @@ class Cloud():
         img = Image.new("RGB", (self.max_width, self.max_height), "blue")
         return img
 
+    def get_multi(self):
+        return self.multi
+
+    def get_list_x(self, i):
+        return self.list_x[i]
+
+    def get_list_y(self, i):
+        return self.list_y[i]
+
+
 
 
 
@@ -78,25 +94,48 @@ class Cloud():
 world_tuple = Database.get_client_and_number_of_projects()
 text_list = []
 weight = 0
+
 for world in world_tuple:
     worlds = Text(world[0], world[1], (120, 120, 120))
     text_list.append(worlds)  # worlds,
     weight += worlds.weight**2
-print(text_list)
+
+# print(text_list)
+
 min_x = min([i.get_text_size()[0] for i in text_list])
 min_y = min([i.get_text_size()[1] for i in text_list])
 print(weight)
+
 print(len(text_list))
+
 first = Cloud(min_x, min_y, weight, len(text_list))
 free_places = first.grid()
+sq_multi = first.get_multi()
+
 print(*free_places)
 img = first.create_cloud()
 # img.show()
 pic = text_list[0].get_text()
 pic.show()
 img.paste(pic, tuple(free_places[0]))
+
+pop_item = []
 for i in range(text_list[0].weight):
-    free_places.pop(0)
+    for j in range(text_list[0].weight):
+        pop_item.append([first.get_list_x(i),first.get_list_y(j)])
+
+for item in pop_item:
+    pass
+
+# check the x size to place more grid
+# check the picture edge before place it
+# rotation how to use and when
+# invert complementer color
+# how to controll the flow in a class
+# chose random from the object list or from the picture
+
+print(*free_places)
+print(*pop_item)
 img.show()
 
 
