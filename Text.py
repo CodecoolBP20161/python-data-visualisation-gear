@@ -25,6 +25,7 @@ class Text():
         self.img2 = Image.new("RGB", (self.text_size[0], 11*self.weight), self.color)
         draw2 = ImageDraw.Draw(self.img2)
         draw2.text((0, 0), self.name, fill=(255, 255, 255), font=self.font)
+        # self.text_size
         # img2.save(self.name)
         # img2.show()
 
@@ -79,23 +80,32 @@ class Cloud():
     def get_multi(self):
         return self.multi
 
-    def get_list_x(self, i):
-        return self.list_x[i]
-
-    def get_list_y(self, i):
-        return self.list_y[i]
-
-
+    def get_list_x(self, i=None):
+        if i:
+            return self.list_x[i]
+        else:
+            return self.list_x
 
 
+    def get_list_y(self, i=None):
+        if i:
+            return self.list_y[i]
+        else:
+            return self.list_x
 
 
-# class controll
-world_tuple = Database.get_client_and_number_of_projects()
+
+
+class Controll():
+    pass
+
+
+# static or instence attribute???
 text_list = []
 weight = 0
 
-for world in world_tuple:
+# @staticmethod
+for world in Database.get_client_and_number_of_projects():
     worlds = Text(world[0], world[1], (120, 120, 120))
     text_list.append(worlds)  # worlds,
     weight += worlds.weight**2
@@ -117,25 +127,53 @@ img = first.create_cloud()
 # img.show()
 pic = text_list[0].get_text()
 pic.show()
+
+x, v = text_list[0].get_text_size()
+x = math.ceil(x/min_x)
+v = int(v/min_y)
+
+if x > len(first.get_list_x()):
+    pass
+if v > len(first.get_list_y()):
+    pass
 img.paste(pic, tuple(free_places[0]))
 
+
+# delete used grid from the list
 pop_item = []
-for i in range(text_list[0].weight):
-    for j in range(text_list[0].weight):
-        pop_item.append([first.get_list_x(i),first.get_list_y(j)])
+# for i in range(text_list[0].weight):
+#     for j in range(text_list[0].weight):
+#         pop_item.append([first.get_list_x(i),first.get_list_y(j)])
+#
+# for item in pop_item:
+#     pass
+
+# OR it is mucth better
+
+
+for i in range(x):
+    for j in range(v):
+        pop_item.append([first.get_list_x(i), first.get_list_y(j)])
 
 for item in pop_item:
-    pass
+    try:
+        idx = free_places.index(item)
+        free_places.pop(idx)
+    except ValueError:
+        print("no index")  # break
 
-# check the x size to place more grid
+print(pop_item)
+print(*free_places)
+
+
 # check the picture edge before place it
 # rotation how to use and when
 # invert complementer color
 # how to controll the flow in a class
 # chose random from the object list or from the picture
 
-print(*free_places)
-print(*pop_item)
+# print(*free_places)
+# print(*pop_item)
 img.show()
 
 
