@@ -3,6 +3,7 @@ from common import get_average_color_codes_by_companies, merge_company_data
 from common import read_from_txt
 
 
+
 class Database():
 
     conn_data = read_from_txt()
@@ -15,10 +16,12 @@ class Database():
     # create a psycopg2 cursor that can execute queries
     cursor = conn.cursor()
 
+
     @classmethod
     def get_companies(cls):
         from company import Company
-        return [Company(raw_company)]
+        return [Company(raw_company) for raw_company in cls.companies_data]
+
 
     @classmethod
     def get_client_and_number_of_projects(cls):
@@ -52,11 +55,16 @@ class Database():
             i[2] = "EUR"
         return budget_list
 
+companies_data = merge_company_data(
+                                    Database.get_client_and_number_of_projects(),
+                                    get_average_color_codes_by_companies(Database.get_project_colors())
+                                    )
 
-# print(get_average_color_codes_by_companies(Database.get_project_colors()))
-# print("--------------------------------------------------------------------------")
-# print(Database.get_client_and_number_of_projects())
-# print("--------------------------------------------------------------------------")
+print(get_average_color_codes_by_companies(Database.get_project_colors()))
+print("--------------------------------------------------------------------------")
+print(Database.get_client_and_number_of_projects())
+print("--------------------------------------------------------------------------")
+print(companies_data)
 # print(merge_company_data(Database.get_client_and_number_of_projects(),get_average_color_codes_by_companies(Database.get_project_colors())))
 # print(Database.get_project_colors())
 
