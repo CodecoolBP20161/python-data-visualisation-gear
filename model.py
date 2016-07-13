@@ -35,10 +35,10 @@ class Database():
         return rows
 
     @classmethod
-    def get_client_colors(cls):
+    def get_project_colors(cls):
         from hex_rgb import hex_to_rgb
         # returns colors by company
-        cls.cursor.execute("SELECT company_name, main_color FROM project;")
+        cls.cursor.execute("SELECT company_name, main_color, name FROM project;")
         colors = cls.cursor.fetchall()
         client_colors = []
         for i in colors:
@@ -60,5 +60,5 @@ class Database():
             i[2] = "EUR"
         return budget_list
 
-# print(Database.get_client_colors())
-# print(Database.get_budget_by_project())
+print(Database.get_project_colors())
+print(Database.get_budget_by_project())
