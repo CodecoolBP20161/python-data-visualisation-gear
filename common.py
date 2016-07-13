@@ -57,4 +57,12 @@ def avg(values1, values2):
     for i in range(len(values1)):
         to_calculate = values1[i] + values2[i]
         to_return.append(int(to_calculate / 2))
+    return tuple(to_return)
+
+
+def merge_company_data(raw_data, raw_colors):
+    to_return = []
+    for i in range(len(raw_data)):
+        to_append = (raw_data[i] + tuple(raw_colors[i][1]))
+        to_return.append(to_append)
     return to_return

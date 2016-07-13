@@ -1,5 +1,5 @@
 import psycopg2
-from common import get_average_color_codes_by_companies
+from common import get_average_color_codes_by_companies, merge_company_data
 from common import read_from_txt
 
 
@@ -16,8 +16,13 @@ class Database():
     cursor = conn.cursor()
 
     @classmethod
+    def get_companies(cls):
+        from company import Company
+        return [Company(raw_company)]
+
+    @classmethod
     def get_client_and_number_of_projects(cls):
-        cls.cursor.execute("SELECT company_name, COUNT(company_name) FROM project GROUP BY company_name;")
+        cls.cursor.execute("SELECT company_name, COUNT(company_name) FROM project GROUP BY company_name ORDER BY company_name;")
         rows = cls.cursor.fetchall()
         return rows
 
@@ -25,7 +30,7 @@ class Database():
     def get_project_colors(cls):
         from common import hex_to_rgb
         # returns colors by company
-        cls.cursor.execute("SELECT company_name, main_color, name FROM project;")
+        cls.cursor.execute("SELECT company_name, main_color, name FROM project ORDER BY company_name;")
         colors = cls.cursor.fetchall()
         client_colors = []
         for i in colors:
@@ -50,6 +55,9 @@ class Database():
 
 # print(get_average_color_codes_by_companies(Database.get_project_colors()))
 # print("--------------------------------------------------------------------------")
+# print(Database.get_client_and_number_of_projects())
+# print("--------------------------------------------------------------------------")
+# print(merge_company_data(Database.get_client_and_number_of_projects(),get_average_color_codes_by_companies(Database.get_project_colors())))
 # print(Database.get_project_colors())
 
 # print(Database.get_budget_by_project())
