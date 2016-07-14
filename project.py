@@ -95,24 +95,3 @@ class Project():
         )
         # list of all project instances
         return [Project(raw_project) for raw_project in project_data]
-
-# print(Project.get_project_colors())
-# print(Project.get_budget_by_project())
-# print(Project.is_maintenance_requested())
-# print(Project.get_projects()[10].maintenance)
-
-
-class NamedProject(Project):
-
-    def __init__(self, *args, **kwargs):
-        super(NamedProject, self).__init__(*args, **kwargs)
-
-    @classmethod
-    def get_all_named_projects(cls):
-        named_projects = []
-        for i, j in enumerate(Project.get_projects()):
-            if j.name is not None:
-                named_projects.append(Project.get_projects()[i])
-        return named_projects
-
-# print(NamedProject.get_all_named_projects()[-1].project_duedate)
