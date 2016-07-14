@@ -8,11 +8,7 @@ class Project():
         self.project_budget = raw_data[1]   # budget value in eur by projects
         self.project_color = raw_data[2]
         self.project_duedate = raw_data[3]
-        # self.name = None
-        # self.weight = None
-        # self.avg_color = None
-
-
+        self.maintenance = raw_data[4]  # boolean value
 
     @staticmethod
     # converts all currencies to eur
@@ -28,12 +24,13 @@ class Project():
     @classmethod
     def get_budget_by_project(cls):
         cursor = Database.find_db()
+        # projects witout name are removed
         cursor.execute("SELECT name, budget_value, budget_currency FROM project WHERE name IS NOT NULL ORDER BY name;")
         budget_list = []
         for i in cursor.fetchall():
             budget_list.append(list(i))
         for i in budget_list:
-            i[1] = "%.2f" % (cls.currency_conversion(i[2]) * float(i[1]))
+            i[1] = "%.0f" % (cls.currency_conversion(i[2]) * float(i[1]))
             i[2] = "EUR"
         return budget_list
 
@@ -58,13 +55,20 @@ class Project():
 
     @classmethod
     def is_maintenance_requested(cls):
+        # returns list of boolean values
         cursor = Database.find_db()
+        # projects without names are removed
         cursor.execute("SELECT maintenance_requested FROM project WHERE name IS NOT NULL ORDER BY name")
         maintenance_requested = []
-        return (cursor.fetchall())
+        for i in cursor.fetchall():
+            if i[0] == 'true':
+                maintenance_requested.append(True)
+            else:
+                maintenance_requested.append(False)
+        return maintenance_requested
 
     @staticmethod
-    def merge_project_data(raw_data, raw_colors, raw_duedates):
+    def merge_project_data(raw_data, raw_colors, raw_duedates, raw_maintenance):
         to_return = []
         for i in range(len(raw_data)):
             to_append = []
@@ -77,6 +81,7 @@ class Project():
                 yr.append(due_dates[i])
             year = ''.join(yr)
             to_append.append(int(year))
+            to_append.append(raw_maintenance[i])
             to_return.append(to_append)
         return to_return
 
@@ -86,10 +91,12 @@ class Project():
         project_data = cls.merge_project_data(
             cls.get_budget_by_project(),
             cls.get_project_colors(),
-            cls.get_project_duedates()
+            cls.get_project_duedates(),
+            cls.is_maintenance_requested()
         )
-        # list of all company instances
+        # list of all project instances
         return [Project(raw_project) for raw_project in project_data]
+
 
 class Image2():
 
@@ -104,7 +111,11 @@ class Image3():
     def __init__(self, project_name):
         self.name = project_name.project_name
         self.weight = project_name.project_duedate
-        # self.avg_color = project_name.
+        if not project_name.maintenance:
+            self.avg_color = (0, 200, 0)
+        else:
+            self.avg_color = (200, 0, 0)
+
 
 # for i in Project.get_projects():
 #     print(i.project_name)
@@ -113,13 +124,13 @@ class Image3():
 #     print(i.project_duedate)
 #     print("------------")
 
-# images_list = []
-# for i in Project.get_projects():
-#     images_list.append(Image2(i))
+images_list = []
+for i in Project.get_projects():
+    images_list.append(Image2(i))
 
 
-# for i in images_list:
-#     print(i.name)
-#     print(i.weight)
-#     print(i.avg_color)
-#     print("------------")
+for i in images_list:
+    print(i.name)
+    print(i.weight)
+    print(i.avg_color)
+    print("------------")
