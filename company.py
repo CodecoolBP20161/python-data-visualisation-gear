@@ -4,7 +4,7 @@ from model import Database
 class Company():
     # including null values
     def __init__(self, raw_data):
-        self.company_name = raw_data[0]
+        self.name = raw_data[0]
         self.weight = raw_data[1]   # number of projects by companies
         self.avg_color = raw_data[2]    # avg of rgb color codes of projects by companies
 

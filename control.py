@@ -39,9 +39,17 @@ class Control():
         tag_cloud_2 = """(2) Generates tag cloud that shows the project names:
         - font size based on the budget of the project (the more, the bigger)
         - font color based on the project colors"""
+        tag_cloud_3 = """(3) Generates tag cloud that shows the project names:
+        - font size based on the due date of the project (the older, the smaller)
+        - font color based on whether the project requires maintenance or not"""
+        tag_cloud_4 = """(3) Generates tag cloud that shows the names of the manager:
+        - font size based on the budget of the project (the older, the smaller)
+        - font color is based on the company they work for"""
 
         for i in range(1, 3):
             print("(%d) Generate tag cloud. Type 'info %d' for more information." % (i, i))
+
+
         user_input = input("").lower()
         while True:
             if user_input == "info 1":
@@ -50,15 +58,24 @@ class Control():
             if user_input == "info 2":
                 print(tag_cloud_2)
                 user_input = input("").lower()
+            if user_input == "info 3":
+                print(tag_cloud_3)
+                user_input = input("").lower()
+            if user_input == "info 4":
+                print(tag_cloud_4)
+                user_input = input("").lower()
             if user_input == "1":
                 cls.database = Company.get_companies()
                 break
             if user_input == "2":
                 cls.database = Project.get_projects()
                 break
+            if user_input == "3":
+                break
+            if user_input == "4":
+                break
             else:
                 print("Unavailable, please try again.")
-                user_input = input("").lower()
 
     def __init__(self):
         self.text_size = 0
@@ -71,7 +88,7 @@ class Control():
     def text_instances(self):
 
         for world in self.database:
-            worlds = Text(world.company_name, world.weight, world.avg_color)
+            worlds = Text(world.name, world.weight, world.avg_color)
             self.text_list.append(worlds)  # worlds,
             h, w = worlds.get_text_size()
             self.text_size += h * w
