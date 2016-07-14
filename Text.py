@@ -12,7 +12,7 @@ class Text():
     img = Image.new("RGB", (5, 5), "red")
     draw = ImageDraw.Draw(img)
 
-    def __init__(self, name, weight, color=(), font="arial.ttf"):  #  ,font)
+    def __init__(self, name, weight, color=(), font="steelfish rg.ttf"):  #  ,font)
         self.name = name
         self.weight = weight
         self.font_size = self.weight * self.MIN_FONTSIZE
@@ -20,6 +20,7 @@ class Text():
         self.font = ImageFont.truetype(font, self.font_size)
         self.text_size = []
         self.img2 = 0
+        self.rotate = False
 
         self.text_size = self.draw.textsize(self.name, font=self.font)
         self.img2 = Image.new("RGB", (self.text_size[0], 11*self.weight), self.color)
@@ -27,17 +28,24 @@ class Text():
         draw2.text((0, 0), self.name, fill=(255, 255, 255), font=self.font)
         # self.text_size
         # img2.save(self.name)
-        # img2.show()
+        # self.img2.show()
 
 
     def get_text_size(self):
         if self.text_size:
+            # if not self.rotate:
             return self.text_size[0], 11*self.weight
+            # if self.rotate:
+            #     return 11 * self.weight, self.text_size[0]
         else:
             raise Exception('No text_size parameters')
 
+    def get_rotate_xy(self):
+        self.img2 = self.img2.rotate(90, resample=Image.BICUBIC, expand=True)
+        self.rotate = True
+        self.get_text_size()
+
     def get_text(self):
-        # self.img2 = self.img2.rotate(90, resample=Image.BICUBIC, expand=True)
         return self.img2
 
 
@@ -54,11 +62,9 @@ class Cloud():
         self.list_x = 0
         self.list_y = 0
 
-
-
     def grid(self):
         grid_cross = []
-        self.multi = math.ceil(math.sqrt(self.max_weight + self.text_number))
+        self.multi = math.ceil(math.sqrt(self.max_weight + (self.text_number)))
         self.max_width = self.grid_x * (self.multi+1)
         self.max_height = self.grid_y * (self.multi+1)
         self.list_x = [*range(0, self.max_width, self.grid_x)]
@@ -69,31 +75,32 @@ class Cloud():
         return grid_cross
 
 
-        print(len(list_x), len(list_y), "list_length")
-        print(self.max_height, self.max_width, "max")
-        print(multi)
+
 
     def create_cloud(self):
         img = Image.new("RGB", (self.max_width, self.max_height), "blue")
+        print(len(self.list_x), len(self.list_y), "list_length")
+        print(self.max_height, self.max_width, "max")
+        print(self.multi)
         return img
 
     def get_multi(self):
         return self.multi
 
-    def get_list_x(self, i=None):
-        if i:
+    def get_list_x(self, i=-1):
+        if i != -1:
             return self.list_x[i]
         else:
             return self.list_x
 
-
-    def get_list_y(self, i=None):
-        if i:
+    def get_list_y(self, i=-1):
+        if i != -1:
             return self.list_y[i]
         else:
             return self.list_x
 
-
+    def get_max_xy(self):
+        return self.max_width, self.max_height
 
 
 class Controll():
@@ -102,67 +109,59 @@ class Controll():
 
 # static or instence attribute???
 text_list = []
+text_size = 0
 weight = 0
 
 # @staticmethod
 for world in Database.get_client_and_number_of_projects():
     worlds = Text(world[0], world[1], (120, 120, 120))
     text_list.append(worlds)  # worlds,
-    weight += worlds.weight**2
+    h, w = worlds.get_text_size()
+    text_size += h * w
+    weight += worlds.weight**2+(2*worlds.weight)
+print("textsize", text_size)
+
+
 
 # print(text_list)
 
 min_x = min([i.get_text_size()[0] for i in text_list])
 min_y = min([i.get_text_size()[1] for i in text_list])
-print(weight)
-
-print(len(text_list))
+print(min_x, min_y)
 
 first = Cloud(min_x, min_y, weight, len(text_list))
 free_places = first.grid()
 sq_multi = first.get_multi()
 
-print(*free_places)
+# print(*free_places)
 img = first.create_cloud()
 # img.show()
-pic = text_list[0].get_text()
-pic.show()
 
-x, v = text_list[0].get_text_size()
-x = math.ceil(x/min_x)
-v = int(v/min_y)
+for picture in text_list:
+    pic = picture.get_text()
+    pic.show()
+    i = 1
+    xy, yx = picture.get_text_size()
+    x = math.ceil(xy/min_x)
+    v = int(yx/min_y)
 
-if x > len(first.get_list_x()):
-    pass
-if v > len(first.get_list_y()):
-    pass
-img.paste(pic, tuple(free_places[0]))
+    if free_places[0][0] + xy < first.get_max_xy()[0]:
+        img.paste(pic, tuple(free_places[0]))
+
+    # if free_places[i][0] + xy > first.get_max_xy()[0]:
+    #     img.paste(pic, tuple(free_places[i]))
+    # print("x ", x, "y ", v)
+
+    for i in range(x):
+        for j in range(v):
+            print("x ", x, "y ", v)
+            try:
+                free_places.remove([first.get_list_x(i), first.get_list_y(j)])
+                print("x ", first.get_list_x(i), "y ", first.get_list_y(j))
+            except:
+                print("value error")
 
 
-# delete used grid from the list
-pop_item = []
-# for i in range(text_list[0].weight):
-#     for j in range(text_list[0].weight):
-#         pop_item.append([first.get_list_x(i),first.get_list_y(j)])
-#
-# for item in pop_item:
-#     pass
-
-# OR it is mucth better
-
-
-for i in range(x):
-    for j in range(v):
-        pop_item.append([first.get_list_x(i), first.get_list_y(j)])
-
-for item in pop_item:
-    try:
-        idx = free_places.index(item)
-        free_places.pop(idx)
-    except ValueError:
-        print("no index")  # break
-
-print(pop_item)
 print(*free_places)
 
 
@@ -178,51 +177,4 @@ img.show()
 
 
 
-
-
-
-
-# MAX_HEIGHT = 740
-# MAX_WIDTH = 760
-# img = Image.new("RGB", (MAX_WIDTH, MAX_HEIGHT), "red")
-#
-# draw = ImageDraw.Draw(img)
-#
-# # font = ImageFont.truetype(<font-file>, <font-size>)
-#
-#
-# min_fontsize = 10
-#
-# print(world_tuple)
-#     # [("one", 1), ("two", 2), ("three", 5), ("four", 10), ("fff", 9),
-#     #            ("one", 1), ("two", 2), ("three", 5), ("four", 10), ("fff", 9),
-#     #            ("one", 1), ("two", 2), ("three", 5), ("four", 10), ("fff", 9)
-#     #            ]
-#
-# height = 0
-# print(height)
-# width = 0
-# row_height = []
-# for i in world_tuple:
-#     text_content = i[0]
-#     font = ImageFont.truetype("arial.ttf", min_fontsize*i[1])
-#     text_size = draw.textsize(text_content, font=font)
-#     # draw.text((x, y),text_content,(r,g,b))
-#     print(text_size)
-#     if width + text_size[0] > MAX_WIDTH:
-#         height += max([i for i in row_height])
-#         row_height = []
-#         width = 0
-#     # draw.rectangle(((0, height), (text_size[0], text_size[1])), fill=(55, 125, 100))
-#     draw.text((width, height), text_content, fill=(255, 255, 255), font=font)
-#     row_height.append(min_fontsize*i[1])
-#     width += text_size[0]
-#     # draw.text((0, text_size[1]), text_content, **text_options)
-# # draw.text((text_size[0], 0), text_content, **text_options)
-# # draw.text(text_size, text_content, **text_options)
-# # img2 = img.crop((0, 0, 0, height))
-# # .crop((0, 30, w, h-30))
-#
-# img.show()
-# img.save('sample-out.png')
 
