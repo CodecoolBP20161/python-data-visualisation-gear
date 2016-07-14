@@ -1,5 +1,4 @@
 from model import Database
-# from common import get_average_color_codes_by_companies, merge_company_data
 
 
 class Company():
@@ -8,21 +7,6 @@ class Company():
         self.company_name = raw_data[0]
         self.weight = raw_data[1]   # number of projects by companies
         self.avg_color = raw_data[2]    # avg of rgb color codes of projects by companies
-
-    @staticmethod
-    # converts color hex codes to rgb
-    def hex_to_rgb(value):
-        if value is not None:
-            value = value.lstrip('#')
-            lv = len(value)
-            if lv == 1:
-                v = int(value, 16)*17
-                return v, v, v
-            if lv == 3:
-                return tuple(int(value[i:i+1], 16)*17 for i in range(0, 3))
-            return tuple(int(value[i:i+lv/3], 16) for i in range(0, lv, lv/3))
-        else:
-            return (0, 0, 0)
 
     @classmethod
     def get_client_and_number_of_projects(cls):
@@ -42,7 +26,7 @@ class Company():
         for i in colors:
             client_colors.append(list(i))
         for i, j in enumerate(client_colors):
-            client_colors[i][1] = cls.hex_to_rgb(j[1])
+            client_colors[i][1] = Database.hex_to_rgb(j[1])
         return client_colors
 
     @staticmethod
@@ -89,4 +73,4 @@ class Company():
 
 # print(Company.get_project_colors())
 # print(Company.get_average_color_codes_by_companies(Company.get_project_colors()))
-# print(Company.get_companies()[10].avg_color)
+print(Company.get_companies()[10].avg_color)
