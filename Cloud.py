@@ -1,37 +1,57 @@
 from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-import random
+# from PIL import ImageFont
+# from PIL import ImageDraw
+# from model import Database
+# from company import Company
+# import random
+import math
 
 class Cloud():
 
-    world_tuple = [("one", 40), ("two", 9), ("three", 15), ("four", 40), ("fff", 5)]
+    def __init__(self, grid_x, grid_y, max_weight, text_number):
+        self.grid_x = grid_x
+        self.grid_y = grid_y
+        self.max_weight = max_weight
+        self.text_number = text_number
+        self.max_width = 0
+        self.max_height = 0
+        self.multi = 0
+        self.list_x = 0
+        self.list_y = 0
 
-    MAX_HEIGHT = 540
-    MAX_WIDTH = 960
+    def grid(self):
+        grid_cross = []
+        self.multi = math.ceil(math.sqrt(self.max_weight + (self.text_number)))
+        self.max_width = math.ceil(math.sqrt(self.max_weight))
+        self.max_height = math.ceil(math.sqrt(self.max_weight))
+        self.list_x = [*range(0, self.max_width, self.grid_x)]
+        self.list_y = [*range(0, self.max_height, self.grid_y)]
+        for x in self.list_x:
+            for y in self.list_y:
+                grid_cross.append([x, y])
+        return grid_cross
 
-    def __init__(self, max_height, max_width):
-        self.max_height = max_height
-        self.max_width = max_width
-        self.wolds = 0
+    def create_cloud(self):
+        img = Image.new("RGB", (self.max_width, self.max_height), "blue")
+        print(len(self.list_x), len(self.list_y), "list_length")
+        print(self.max_height, self.max_width, "max")
+        print(self.multi)
+        return img
 
-    @classmethod
-    def grids(cls):
-        weight = 0
-        grid_x_list = []
-        grid_y_list = []
+    def get_multi(self):
+        return self.multi
 
+    def get_list_x(self, i=-1):
+        if i != -1:
+            return self.list_x[i]
+        else:
+            return self.list_x
 
-        for i in cls.world_tuple:
-            weight += i[1] * len(i[0])
-        print(weight)
-        ds = (cls.MAX_HEIGHT * cls.MAX_WIDTH) / weight
-        dt = ds / (cls.MAX_WIDTH/cls.MAX_HEIGHT)
-        print(dt)
-        grid_y = cls.MAX_HEIGHT / (weight/2)
-        grid_x = cls.MAX_WIDTH / (weight/2)
-        # grid_x_list = [*range(0, cls.MAX_WIDTH, grid_x)]
-        # grid_y_list = [*range(0, cls.MAX_HEIGHT, grid_y)]
-        print(grid_y, grid_x)
+    def get_list_y(self, i=-1):
+        if i != -1:
+            return self.list_y[i]
+        else:
+            return self.list_x
 
-Cloud.grids()
+    def get_max_xy(self):
+        return self.max_width, self.max_height
