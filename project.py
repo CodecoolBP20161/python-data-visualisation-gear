@@ -7,7 +7,8 @@ class Project():
         self.name = raw_data[0]
         self.project_budget = raw_data[1]   # budget value in eur by projects
         self.project_color = raw_data[2]
-        self.maintenance = raw_data[3]  # boolean value
+        self.project_duedate = raw_data[3]
+        self.maintenance = raw_data[4]  # boolean value
 
     @staticmethod
     # converts all currencies to eur
@@ -46,8 +47,15 @@ class Project():
         return project_colors
 
     @classmethod
-    # returns list of boolean values
+    def get_project_duedates(cls):
+        cursor = Database.find_db()
+        cursor.execute("SELECT duedate FROM project ORDER BY name;")
+        project_duedates = []
+        return cursor.fetchall()
+
+    @classmethod
     def is_maintenance_requested(cls):
+        # returns list of boolean values
         cursor = Database.find_db()
         # projects without names are removed
         cursor.execute("SELECT maintenance_requested FROM project ORDER BY name")
@@ -60,13 +68,19 @@ class Project():
         return maintenance_requested
 
     @staticmethod
-    def merge_project_data(raw_data, raw_colors, raw_maintenance):
+    def merge_project_data(raw_data, raw_colors, raw_duedates, raw_maintenance):
         to_return = []
         for i in range(len(raw_data)):
             to_append = []
             to_append.append(raw_data[i][0])
             to_append.append(raw_data[i][1])
             to_append.append(tuple(raw_colors[i][0]))
+            due_dates = str(raw_duedates[i]).replace("(datetime.date(", "")
+            yr = []
+            for i in range(4):
+                yr.append(due_dates[i])
+            year = ''.join(yr)
+            to_append.append(int(year))
             to_append.append(raw_maintenance[i])
             to_return.append(to_append)
         return to_return
@@ -76,6 +90,7 @@ class Project():
         project_data = cls.merge_project_data(
             cls.get_budget_by_project(),
             cls.get_project_colors(),
+            cls.get_project_duedates(),
             cls.is_maintenance_requested()
         )
         # list of all project instances
@@ -85,6 +100,7 @@ class Project():
 # print(Project.get_budget_by_project())
 # print(Project.is_maintenance_requested())
 # print(Project.get_projects()[10].maintenance)
+
 
 class NamedProject(Project):
 
@@ -99,4 +115,4 @@ class NamedProject(Project):
                 named_projects.append(Project.get_projects()[i])
         return named_projects
 
-print(NamedProject.get_all_named_projects()[-1].name)
+print(NamedProject.get_all_named_projects()[-1].project_duedate)

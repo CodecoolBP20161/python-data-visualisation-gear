@@ -2,6 +2,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from model import Database
+from company import Company
 import random
 import math
 
@@ -23,7 +24,7 @@ class Text():
         self.rotate = False
 
         self.text_size = self.draw.textsize(self.name, font=self.font)
-        self.img2 = Image.new("RGB", (self.text_size[0], 11*self.weight), self.color)
+        self.img2 = Image.new("RGB", (self.text_size[0], self.text_size[1]), self.color)
         draw2 = ImageDraw.Draw(self.img2)
         draw2.text((0, 0), self.name, fill=(255, 255, 255), font=self.font)
         # self.text_size
@@ -34,7 +35,7 @@ class Text():
     def get_text_size(self):
         if self.text_size:
             # if not self.rotate:
-            return self.text_size[0], 11*self.weight
+            return self.text_size[0], self.text_size[1]
             # if self.rotate:
             #     return 11 * self.weight, self.text_size[0]
         else:
@@ -113,8 +114,8 @@ text_size = 0
 weight = 0
 
 # @staticmethod
-for world in Database.get_client_and_number_of_projects():
-    worlds = Text(world[0], world[1], (120, 120, 120))
+for world in Company.get_companies():
+    worlds = Text(world.company_name, world.weight, world.avg_color)
     text_list.append(worlds)  # worlds,
     h, w = worlds.get_text_size()
     text_size += h * w
@@ -136,17 +137,27 @@ sq_multi = first.get_multi()
 # print(*free_places)
 img = first.create_cloud()
 # img.show()
-
+# text_list.sort()
 for picture in text_list:
     pic = picture.get_text()
     pic.show()
-    i = 1
-    xy, yx = picture.get_text_size()
-    x = math.ceil(xy/min_x)
-    v = int(yx/min_y)
 
-    if free_places[0][0] + xy < first.get_max_xy()[0]:
-        img.paste(pic, tuple(free_places[0]))
+    xy, yx = picture.get_text_size()
+    x = math.ceil(xy/min_x)+1
+    v = int(yx/min_y)+1
+
+    for i in range(len(free_places)):
+        k = random.randint(0, len(free_places)-1)
+        if free_places[k][0] + xy < first.get_max_xy()[0]:
+            if free_places[k][1] + yx < first.get_max_xy()[1]:
+                img.paste(pic, tuple(free_places[k]))
+                break
+        if free_places[i][0] + xy > first.get_max_xy()[0] and free_places[k][1] + yx < first.get_max_xy()[1]:
+            picture.get_rotate()
+            if free_places[i][0] + yx < first.get_max_xy()[0] and free_places[k][1] + xy < first.get_max_xy()[1]:
+                img.paste(pic, tuple(free_places[k]))
+            else:
+                continue
 
     # if free_places[i][0] + xy > first.get_max_xy()[0]:
     #     img.paste(pic, tuple(free_places[i]))
@@ -154,12 +165,14 @@ for picture in text_list:
 
     for i in range(x):
         for j in range(v):
-            print("x ", x, "y ", v)
+            print("x freeplace: ", free_places[0][0], "y freeplace: ", free_places[0][1])
             try:
-                free_places.remove([first.get_list_x(i), first.get_list_y(j)])
-                print("x ", first.get_list_x(i), "y ", first.get_list_y(j))
+                print("x getlist_x_i: ", first.get_list_x(i), "y get_list_j: ", first.get_list_y(j))
+                free_places.remove([free_places[k+i][0], free_places[k+j][1]])
+
             except:
                 print("value error")
+                continue
 
 
 print(*free_places)
