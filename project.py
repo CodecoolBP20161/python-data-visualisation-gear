@@ -111,6 +111,7 @@ class Image2():
             images_list.append(Image2(i))
         return images_list
 
+
 class Image3():
 
     def __init__(self, project_name):
@@ -122,10 +123,8 @@ class Image3():
             self.avg_color = (200, 0, 0)
 
     @classmethod
-    def get_image2(cls):
+    def get_image3(cls):
         images_list = []
         for i in Project.get_projects():
-            images_list.append(Image2(i))
+            images_list.append(Image3(i))
         return images_list
-
-print(images_list[0].)
