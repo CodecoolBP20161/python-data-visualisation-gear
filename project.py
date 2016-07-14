@@ -7,6 +7,7 @@ class Project():
         self.name = raw_data[0]
         self.project_budget = raw_data[1]   # budget value in eur by projects
         self.project_color = raw_data[2]
+        self.project_duedate = raw_data[3]
 
     @staticmethod
     # converts all currencies to eur
@@ -44,22 +45,33 @@ class Project():
         return project_colors
 
     @classmethod
+    def get_project_duedates(cls):
+        cursor = Database.find_db()
+        cursor.execute("SELECT duedate FROM project WHERE name IS NOT NULL ORDER BY name;")
+        project_duedates = []
+        return cursor.fetchall()
+
+    @classmethod
     def is_maintenance_requested(cls):
         cursor = Database.find_db()
         cursor.execute("SELECT maintenance_requested FROM project WHERE name IS NOT NULL ORDER BY name")
         maintenance_requested = []
-        # for i in cursor.fetchall():
-        #     project_colors.append(list(i))
         return (cursor.fetchall())
 
     @staticmethod
-    def merge_project_data(raw_data, raw_colors):
+    def merge_project_data(raw_data, raw_colors, raw_duedates):
         to_return = []
         for i in range(len(raw_data)):
             to_append = []
             to_append.append(raw_data[i][0])
             to_append.append(raw_data[i][1])
             to_append.append(tuple(raw_colors[i][0]))
+            due_dates = str(raw_duedates[i]).replace("(datetime.date(", "")
+            yr = []
+            for i in range(4):
+                yr.append(due_dates[i])
+            year = ''.join(yr)
+            to_append.append(int(year))
             to_return.append(to_append)
         return to_return
 
@@ -67,12 +79,16 @@ class Project():
     def get_projects(cls):
         project_data = cls.merge_project_data(
             cls.get_budget_by_project(),
-            cls.get_project_colors()
+            cls.get_project_colors(),
+            cls.get_project_duedates()
         )
         # list of all company instances
         return [Project(raw_project) for raw_project in project_data]
 
-# print(Project.get_project_colors())
-# print(Project.get_budget_by_project())
-# print(Project.is_maintenance_requested())
-# print(Project.get_projects()[10].project_budget)
+
+for i in Project.get_projects():
+    print(i.name)
+    print(i.project_budget)
+    print(i.project_color)
+    print(i.project_duedate)
+    print("------------")
