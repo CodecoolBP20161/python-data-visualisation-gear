@@ -6,7 +6,7 @@ class Project():
     def __init__(self, raw_data):
         self.name = raw_data[0]
         self.project_budget = raw_data[1]   # budget value in eur by projects
-        self.project_color = raw_data[2]
+        self.color = raw_data[2]
         self.project_duedate = raw_data[3]
         self.maintenance = raw_data[4]  # boolean value
 
@@ -115,4 +115,4 @@ class NamedProject(Project):
                 named_projects.append(Project.get_projects()[i])
         return named_projects
 
-print(NamedProject.get_all_named_projects()[-1].project_duedate)
+# print(NamedProject.get_all_named_projects()[-1].project_duedate)
