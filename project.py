@@ -4,10 +4,15 @@ from model import Database
 class Project():
 
     def __init__(self, raw_data):
-        self.name = raw_data[0]
+        self.project_name = raw_data[0]
         self.project_budget = raw_data[1]   # budget value in eur by projects
         self.project_color = raw_data[2]
         self.project_duedate = raw_data[3]
+        # self.name = None
+        # self.weight = None
+        # self.avg_color = None
+
+
 
     @staticmethod
     # converts all currencies to eur
@@ -75,6 +80,7 @@ class Project():
             to_return.append(to_append)
         return to_return
 
+
     @classmethod
     def get_projects(cls):
         project_data = cls.merge_project_data(
@@ -85,10 +91,35 @@ class Project():
         # list of all company instances
         return [Project(raw_project) for raw_project in project_data]
 
+class Image2():
 
-for i in Project.get_projects():
-    print(i.name)
-    print(i.project_budget)
-    print(i.project_color)
-    print(i.project_duedate)
-    print("------------")
+    def __init__(self, project_object):
+        self.name = project_object.project_name
+        self.weight = project_object.project_budget   # budget value in eur by projects
+        self.avg_color = project_object.project_color
+
+
+class Image3():
+
+    def __init__(self, project_name):
+        self.name = project_name.project_name
+        self.weight = project_name.project_duedate
+        # self.avg_color = project_name.
+
+# for i in Project.get_projects():
+#     print(i.project_name)
+#     print(i.project_budget)
+#     print(i.project_color)
+#     print(i.project_duedate)
+#     print("------------")
+
+# images_list = []
+# for i in Project.get_projects():
+#     images_list.append(Image2(i))
+
+
+# for i in images_list:
+#     print(i.name)
+#     print(i.weight)
+#     print(i.avg_color)
+#     print("------------")
