@@ -70,7 +70,3 @@ class Company():
         )
         # list of all company instances
         return [Company(raw_company) for raw_company in companies_data]
-
-# print(Company.get_project_colors())
-# print(Company.get_average_color_codes_by_companies(Company.get_project_colors()))
-print(Company.get_companies()[10].avg_color)
