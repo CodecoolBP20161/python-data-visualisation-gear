@@ -13,6 +13,8 @@ class Control():
 
     database = []
     text_list = []
+    multiplicator_height = 2
+    multiplicator_width = 1
 
 
     @staticmethod
@@ -63,15 +65,23 @@ class Control():
                 user_input = input("").lower()
             if user_input == "1":
                 cls.database = Company.get_companies()
+                cls.multiplicator_height = 1.5
+                cls.multiplicator_width = 2.5
                 break
             if user_input == "2":
                 cls.database = Image2.get_image2()
+                cls.multiplicator_height = 1.5
+                cls.multiplicator_width = 3
                 break
             if user_input == "3":
                 cls.database = Image3.get_image3()
+                cls.multiplicator_height = 1.8
+                cls.multiplicator_width = 3.4
                 break
             if user_input == "4":
                 cls.database = Manager.get_all()
+                cls.multiplicator_height = 1.5
+                cls.multiplicator_width = 3
                 break
             else:
                 print("Unavailable, please try again.")
@@ -95,7 +105,7 @@ class Control():
             self.text_list.append(worlds)
             h, w = worlds.get_text_size()
             self.text_size += h * w
-        self.picture = Cloud(math.ceil(math.sqrt(self.text_size))*2, math.ceil(math.sqrt(self.text_size)), (0, 0, 0))
+        self.picture = Cloud(math.ceil(math.sqrt(self.text_size) * self.multiplicator_width), math.ceil(math.sqrt(self.text_size)* self.multiplicator_height), (0, 0, 0))
         self.img = self.picture.create_cloud()
 
     def place_pictures(self):
