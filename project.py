@@ -129,6 +129,4 @@ class Image3():
             images_list.append(Image3(i))
         return images_list
 
-image = Image3.get_image3()
-for i in image:
-    print(i.avg_color)
+

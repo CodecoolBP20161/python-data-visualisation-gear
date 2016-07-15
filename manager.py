@@ -13,7 +13,7 @@ class Manager():
     @classmethod
     def get_manager_names_and_companies(cls):
         cursor = Database.find_db()
-        cursor.execute("SELECT manager, company_name FROM project ORDER BY name;")
+        cursor.execute("SELECT manager, company_name FROM project WHERE manager IS NOT NULL ORDER BY name;")
         managers = cursor.fetchall()
         return managers
 
@@ -21,7 +21,7 @@ class Manager():
     def get_budget_by_project(cls):
         cursor = Database.find_db()
         # projects witout name are removed
-        cursor.execute("SELECT name, budget_value, budget_currency FROM project ORDER BY name;")
+        cursor.execute("SELECT name, budget_value, budget_currency FROM project WHERE manager IS NOT NULL ORDER BY name;")
         budget_list = []
         for i in cursor.fetchall():
             budget_list.append(list(i))
@@ -35,6 +35,10 @@ class Manager():
         to_return = []
         for i in range(len(raw_data)):
             to_append = []
+            if len(str(raw_budget[i][1])) <= 3:
+                raw_budget[i][1] = 1
+            if len(str(raw_budget[i][1])) >= 4:
+                raw_budget[i][1] = int(raw_budget[i][1]) // 1000
             to_append.append(raw_data[i][0])
             to_append.append(raw_budget[i][1])
             to_append.append(raw_color[i])
@@ -60,3 +64,4 @@ class Manager():
 
 # print(Manager.get_all()[-1].weight)
 # print(Manager.get_budget_by_project())
+
