@@ -116,7 +116,7 @@ class Control():
     def place_pictures(self):
 
         draw = ImageDraw.Draw(self.img)
-        MAX_HEIGHT = self.picture.max_height  # math.ceil(math.sqrt(text_size))
+        MAX_HEIGHT = self.picture.max_height
         MAX_WIDTH = self.picture.max_width  # .ceil(math.sqrt(text_size))*2
         min_fontsize = Text.MIN_FONTSIZE
         height = 0
