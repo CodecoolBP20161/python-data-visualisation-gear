@@ -86,7 +86,7 @@ class Control():
                 cls.database = Manager.get_all()
                 cls.multiplicator_height = 1.5
                 cls.multiplicator_width = 3
-                cls.image = "image6.jpg"
+                cls.image = "image.jpg"
                 break
             else:
                 print("Unavailable, please try again.")
