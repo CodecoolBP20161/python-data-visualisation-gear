@@ -8,13 +8,14 @@ import math
 
 class Cloud():
 
-    def __init__(self, max_width, max_height, color):
+    def __init__(self, max_width, max_height, color, image):
         self.max_width = max_width
         self.max_height = max_height
         self.color = color
+        self.image = image
 
     def create_cloud(self):
         # img = Image.new("RGB", (self.max_width, self.max_height), self.color)
-        img = Image.open("image5.jpg")
+        img = Image.open(self.image)
         img = img.resize((self.max_width, self.max_height), Image.ADAPTIVE)
         return img

@@ -118,9 +118,9 @@ class Image3():
         self.name = project_name.project_name
         self.weight = project_name.project_duedate - 1999
         if not project_name.maintenance:
-            self.avg_color = (0, random.randint(50, 250), random.randint(0, 50))
+            self.avg_color = (random.randint(50, 100), random.randint(150, 250), random.randint(50, 100))
         else:
-            self.avg_color = (random.randint(50, 250), 0, random.randint(0, 50))
+            self.avg_color = (random.randint(200, 250), random.randint(30, 50), random.randint(0, 50))
 
     @classmethod
     def get_image3(cls):
