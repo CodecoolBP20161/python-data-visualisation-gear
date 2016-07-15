@@ -77,8 +77,8 @@ class Project():
             to_append.append(tuple(raw_colors[i][0]))
             due_dates = str(raw_duedates[i]).replace("(datetime.date(", "")
             yr = []
-            for i in range(4):
-                yr.append(due_dates[i])
+            for j in range(4):
+                yr.append(due_dates[j])
             year = ''.join(yr)
             to_append.append(int(year))
             to_append.append(raw_maintenance[i])

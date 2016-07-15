@@ -14,5 +14,7 @@ class Cloud():
         self.color = color
 
     def create_cloud(self):
-        img = Image.new("RGB", (self.max_width, self.max_height), self.color)
+        # img = Image.new("RGB", (self.max_width, self.max_height), self.color)
+        img = Image.open("image.jpg")
+        img = img.resize((self.max_width, self.max_height), Image.ADAPTIVE)
         return img

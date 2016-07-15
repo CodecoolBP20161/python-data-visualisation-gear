@@ -7,7 +7,7 @@ from Cloud import Cloud
 from manager import Manager
 from Text import Text
 import math
-
+import random
 
 class Control():
 
@@ -107,6 +107,7 @@ class Control():
         height = 0
         width = 0
         row_height = []
+        random.shuffle(self.text_list)
         for i in self.text_list:
             text_content = i.name
             font = ImageFont.truetype("arial.ttf", min_fontsize + (i.weight * 2))
